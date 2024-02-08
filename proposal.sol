@@ -2,14 +2,12 @@
 pragma solidity ^0.8.18;
 
 contract ProposalContract {
-    // ****************** Data ***********************
-
-    //Owner
     address owner;
 
     uint256 private counter;
 
     struct Proposal {
+        string title;
         string description; // Description of the proposal
         uint256 approve; // Number of approve votes
         uint256 reject; // Number of reject votes
@@ -23,7 +21,6 @@ contract ProposalContract {
 
     address[] private voted_addresses; 
 
-    //constructor
     constructor() {
         owner = msg.sender;
         voted_addresses.push(msg.sender);
@@ -44,16 +41,13 @@ contract ProposalContract {
         _;
     }
 
-    // ****************** Execute Functions ***********************
-
-
     function setOwner(address new_owner) external onlyOwner {
         owner = new_owner;
     }
 
-    function create(string calldata _description, uint256 _total_vote_to_end) external onlyOwner {
+    function create(string calldata _title, string calldata _description, uint256 _total_vote_to_end) external onlyOwner {
         counter += 1;
-        proposal_history[counter] = Proposal(_description, 0, 0, 0, _total_vote_to_end, false, true);
+        proposal_history[counter] = Proposal(_title, _description, 0, 0, 0, _total_vote_to_end, false, true);
     }
     
 
@@ -105,9 +99,6 @@ contract ProposalContract {
         }
     }
 
-
-    // ****************** Query Functions ***********************
-
     function isVoted(address _address) public view returns (bool) {
         for (uint i = 0; i < voted_addresses.length; i++) {
             if (voted_addresses[i] == _address) {
@@ -116,7 +107,6 @@ contract ProposalContract {
         }
         return false;
     }
-
 
     function getCurrentProposal() external view returns(Proposal memory) {
         return proposal_history[counter];
